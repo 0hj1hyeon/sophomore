@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JH MALL</title>
+    <style>
+        
+
+        /*바디*/
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+         /*헤더*/
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* 로고 이미지*/
+        header img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+
+        /* 내용 컨테이너 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 제목 스타일 */
+        h2 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        /* 로그인 버튼 스타일 */
+        .login-button {
+            background-color: #0077cc;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        /* 네비게이션 */
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        /*  목록 */
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgb(0, 0, 0);
+        }
+
+        /* 상품 이미지 스타일 */
+        li img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /*  링크 스타일 */
+        li a {
+            text-decoration: none;
+            color: #0077cc;
+        }
+
+        /* 추가한 섹션 스타일 */
+        .section {
+            margin-top: 40px;
+        }
+
+        /* 사용자 리뷰 스타일 */
+        .user-reviews {
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        /* 연락처 정보 스타일 */
+        .contact-info {
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="JHMALL.html">
+            <img src="C:\Users\ohj01\OneDrive\바탕 화면\웹프 과제\첫번째 과제\Thnk.png" alt="My Image">
+        </a>
+    </header>
+    <div class="container">
+        <h2>전자제품 <span style="color: red;">최저가</span> 사이트</h2>
+        <p><a class="login-button" href="login.html" target="_blank">로그인</a></p><br>
+        <nav>
+            <ul>
+                <li><a target="iframe1" href="lg.html">LG</a></li>
+                <li><a target="iframe1" href="samsung.html">Samsung</a></li>
+            </ul>
+        </nav>
+
+        <!-- 소개 섹션 추가 -->
+        <div class="section">
+            <h2>우리 서비스 소개</h2>
+            <p>저희 JH MALL은 최저가 전자제품을 제공하는 온라인 쇼핑 사이트입니다.</p>
+        </div>
+
+        <!-- 사용자 리뷰 섹션 추가 -->
+        <div class="section">
+            <h2>사용자 리뷰</h2>
+            <div class="user-reviews">
+                <p><strong>사용자 1:</strong> 이 사이트에서 쇼핑하면 항상 만족스러워요!</p>
+                <p><strong>사용자 2:</strong> 가격도 저렴하고 배송도 빨라서 좋아요.</p>
+            </div>
+        </div>
+
+        <!-- 연락처 정보 섹션 추가 -->
+        <div class="section">
+            <h2>연락처 정보</h2>
+            <div class="contact-info">
+                <p><strong>고객 서비스 이메일:</strong> JHsupport@jhmall.com</p>
+                <p><strong>전화번호:</strong> 1234-5678</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
