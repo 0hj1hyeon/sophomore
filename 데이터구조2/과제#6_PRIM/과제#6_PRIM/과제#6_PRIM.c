@@ -39,11 +39,18 @@ void prim(GraphType* g, int s)
 	distance[s] = 0;
 	for (i = 0; i < g->n; i++) {
 		u = get_min_vertex(g->n);
+		
 		selected[u] = TRUE;
-		for (int i = 0; i <g->n; i++) {
+		for (int i = 0; i < g->n; i++) {
 			printf("selected[%d]:%d ", i, selected[i]);
 
 		}
+		printf("\n");
+		for (int i = 0; i < g->n; i++) {
+			printf("distance[%d]:%d ", i, distance[i]);
+
+		}
+		printf("\n");
 		if (distance[u] == INF) return;
 		printf("정점 %d 추가\n", u);
 		for (v = 0; v < g->n; v++)
@@ -52,7 +59,7 @@ void prim(GraphType* g, int s)
 					distance[v] = g->weight[u][v];
 	}
 	int a = 0;
-	for (int i = 0; i <= g->n; i++) {
+	for (int i = 0; i <= g->n; i++) { // 거리값 합산
 		a += distance[i];
 	}
 	printf("거리는: %d", a);
