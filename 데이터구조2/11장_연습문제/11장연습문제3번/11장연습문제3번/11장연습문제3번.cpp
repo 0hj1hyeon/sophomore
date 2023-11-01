@@ -41,7 +41,7 @@ void prim(GraphType* g, int s)
 		u = get_min_vertex(g->n);
 
 		selected[u] = TRUE;
-		/*for (int i = 0; i < g->n; i++) {
+		for (int i = 0; i < g->n; i++) {
 			printf("selected[%d]:%d ", i, selected[i]);
 
 		}
@@ -50,7 +50,7 @@ void prim(GraphType* g, int s)
 			printf("distance[%d]:%d ", i, distance[i]);
 
 		}
-		printf("\n");*/
+		printf("\n");
 		if (distance[u] == INF) return;
 		printf("정점 %d 추가\n", u);
 		for (v = 0; v < g->n; v++)
