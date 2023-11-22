@@ -222,6 +222,40 @@ public:
         save_Book_File();
     }
 
+    Book* findBook(const string& bookName) {
+        // 도서를 찾는 로직을 구현하세요.
+        for (Book& book : books) {
+            if (book.getBookName() == bookName) {
+                return &book;
+            }
+        }
+        return nullptr; // 도서를 찾지 못한 경우
+    }
+
+    // 도서 삭제 메서드: 도서 목록에서 특정 도서를 삭제하고 파일에 저장
+    void rentBook(const string& bookName, const string& memberId) {
+        // 도서 대여 로직 구현
+        Book* book = findBook(bookName);
+        if (book) {
+            if (!book->isRented()) {
+                book->setRentingStatus(true, memberId);
+                cout << "도서 대여 성공!" << endl;
+            }
+            else {
+                cout << "이미 대여 중인 도서입니다." << endl;
+            }
+        }
+        else {
+            cout << "도서를 찾을 수 없습니다." << endl;
+        }
+    }
+
+    // 도서 목록 반환 메서드
+    const vector<Book>& getBooks() const {
+
+        return books;
+    }
+
     // 도서 삭제 메서드: 도서 목록에서 특정 도서를 삭제하고 파일에 저장
     void remove_Book(const string& book_Name) {
         auto it = std::find_if(books.begin(), books.end(), [&](const Book& book) {
@@ -238,63 +272,26 @@ public:
         }
     }
 
-    // 도서 목록 반환 메서드
-    const vector<Book>& getBooks() const {
-
-        return books;
-    }
-
-
     void book_and_app() {
         save_Book_File();
     }
 
 
-    // 도서 대여 메서드: 특정 도서를 대여하고 파일에 저장
-    bool rent_Book(const string& bookName, const string& memberId) {
-        auto it = std::find_if(books.begin(), books.end(), [&](const Book& book) {
-            return book.getBookName() == bookName;
-            });
-
-        if (it != books.end()) {
-            if (!it->isRented()) {
-                it->setRentingStatus(true, memberId);
-                save_Book_File();
-                cout << bookName << "이(가) 대여되었습니다." << endl;
-                return true; // 대여 성공 시 true 반환
+    void returnBook(const string& bookName) {
+        // 도서 반납 로직 구현
+        Book* book = findBook(bookName);
+        if (book) {
+            if (book->isRented()) {
+                book->setRentingStatus(false, "");
+                cout << "도서 반납 성공!" << endl;
             }
-
             else {
-                cout << bookName << "은(는) 이미 대여 중입니다." << endl;
+                cout << "대여 중인 도서가 아닙니다." << endl;
             }
         }
         else {
-            cout << bookName << "이(가)라는 도서가 없습니다." << endl;
+            cout << "도서를 찾을 수 없습니다." << endl;
         }
-
-        return false; // 대여 실패 시 false 반환
-    }
-
-    // 도서 반납 메서드: 특정 도서를 반납하고 파일에 저장
-    bool return_Book(const string& bookName, const string& memberId) {
-        auto it = std::find_if(books.begin(), books.end(), [&](const Book& book) {
-            return book.getBookName() == bookName && book.isRented() && book.getRentingMemberId() == memberId;
-            });
-
-        if (it != books.end()) {
-            it->setRentingStatus(false, "");
-            save_Book_File();
-            cout << bookName << "이(가) 반납되었습니다." << endl;
-            return true; // 성공적으로 반납된 경우 true 반환
-        }
-        else {
-            cout << "해당 도서를 대여 중인 회원이 아니거나 도서가 존재하지 않습니다." << endl;
-            return false; // 반납 실패한 경우 false 반환
-        }
-    }
-
-    ~BookSystem() {
-        save_Book_File();
     }
 
 
@@ -339,14 +336,24 @@ private:
     }
 };
 
+// Admin 클래스: 관리자 정보를 나타내는 클래스
+class Admin : public Member {
+public:
+    Admin(const string& adminId, const string& password, const string& adminName, const string& adminJob)
+        : Member(adminId, password, adminName, adminJob) {}
+};
+
+
 class MemberSystem {
 private:
     vector<Member> members;
+    vector<Admin> admins;  // 관리자 정보를 저장하는 벡터
 
 public:
 
     MemberSystem() {
         Load_Member_File();
+        Load_Admin_File();  // 관리자 정보 파일 로드
     }
 
     void signUp(const Member& member) {
@@ -365,6 +372,23 @@ public:
         }
         cout << "로그인 실패. 아이디나 비밀번호가 일치하지 않습니다." << endl;
         return false;
+    }
+
+
+    bool isAdmin(const string& id) const {
+        // id가 관리자인지 여부를 판별하는 로직
+        for (const Admin& admin : admins) {
+            if (admin.getId() == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void add_Admin(const Admin& admin) {
+        admins.push_back(admin);
+        save_Admin_File();
+        cout << "관리자 추가가 완료되었습니다." << endl;
     }
 
     bool deleteMember(const string& id) {
@@ -423,8 +447,6 @@ public:
             return false;
         }
     }
-
-
 
 
 
@@ -526,94 +548,116 @@ private:
             return false;
         }
     }
-};
 
 
-
-// Book_App 클래스: 도서 관리 애플리케이션을 나타내는 클래스
-class Book_App {
-private:
-    BookSystem system;
-    MemberSystem memberSystem;
-    string currentMemberId; // 현재 로그인한 회원의 아이디
-
-public:
-    // 생성자
-    Book_App(string id) : currentMemberId(id), system() {
-    }
-
-
-
-    // 애플리케이션 실행 메서드
-    void run() {
-        while (true) {
-            try {
-                showMenu();
-                int choice = getChoice();
-
-                switch (choice) {
-                case 0:
-                    cout << "프로그램을 종료합니다." << endl;
-                    return;
-                case 1:
-                    display_Books();
-                    break;
-                case 2: {
-                    if (!display_Books()) {
-                        break;
-                    }
-                    string bookName;
-
-
-
-                    cout << "삭제할 도서 이름을 입력하세요: ";
-                    cin.ignore();
-                    getline(cin, bookName);
-                    system.remove_Book(bookName);
-                    break;
-                }
-                case 3:
-                    Add_Book();
-                    break;
-                case 4:
-                    rentBook();
-                    break;
-                case 5:
-                    returnBook();
-                    break;
-                default:
-                    cout << "잘못된 입력입니다. 다시 시도하세요." << endl;
-                }
+    void Load_Admin_File() {
+        ifstream file("admins.txt");
+        if (file.is_open()) {
+            admins.clear();
+            string id, password, name, job;
+            while (file >> id >> password >> name >> job) {
+                Admin admin(id, password, name, job);
+                admins.push_back(admin);
             }
-            catch (const exception& e) {
-                cerr << "Error: " << e.what() << endl; // 예외 메시지 출력
-            }
+            file.close();
         }
     }
 
 
+    void save_Admin_File() {
+        ofstream file("admins.txt");
+        if (file.is_open()) {
+            for (const Admin& admin : admins) {
+                file << admin.getId() << " " << admin.getPassword() << " " << admin.getName() << " " << admin.getJob() << endl;
+            }
+            file.close();
+        }
+    }
+};
 
-    // 메뉴 출력 메서드
+
+
+
+class App {
+public:
+    virtual void run() = 0;
+};
+
+
+class AdminApp : public App {
+private:
+    BookSystem system;
+    MemberSystem& memberSystem;
+
+public:
+    AdminApp(BookSystem& bookSystem, MemberSystem& mSystem)
+        : system(bookSystem), memberSystem(mSystem) {}
+
+    void run() override {
+        while (true) {
+            showMenu();
+            int choice = getChoice();
+
+            switch (choice) {
+            case 0:
+                cout << "프로그램을 종료합니다." << endl;
+                return;
+            case 1:
+                displayBooks();
+                break;
+            case 2: {
+                if (!displayBooks()) {
+                    break;
+                }
+                string bookName;
+
+                cout << "삭제할 도서 이름을 입력하세요: ";
+                cin.ignore();
+                getline(cin, bookName);
+                system.remove_Book(bookName);
+                break;
+            }
+            case 3:
+                addBook();
+                break;
+            case 4:
+                displayMembers();
+                break;
+            case 5: {
+                string deleteId;
+                cout << "회원 삭제" << endl;
+                cout << "삭제할 회원의 아이디: ";
+                cin >> deleteId;
+                memberSystem.deleteMember(deleteId);
+                break;
+            }
+            case 6:
+                addAdmin();  // 새로운 관리자 추가
+                break;
+            default:
+                cout << "잘못된 입력입니다. 다시 시도하세요." << endl;
+            }
+        }
+    }
+private:
     void showMenu() const {
-        cout << "도서 관리 프로그램" << endl;
         cout << "1. 도서 조회" << endl;
         cout << "2. 도서 삭제" << endl;
         cout << "3. 도서 추가" << endl;
-        cout << "4. 도서 대여" << endl;
-        cout << "5. 도서 반납" << endl;
-        cout << "0. 종료0" << endl;
-        cout << "메뉴 선택: " << endl;
+        cout << "4. 회원 조회" << endl;
+        cout << "5. 회원 삭제" << endl;
+        cout << "6. 관리자 추가" << endl;
+        cout << "0. 종료" << endl;
+        cout << "메뉴 선택: ";
     }
 
-    // 사용자 입력 받는 메서드
     int getChoice() const {
         int choice;
         cin >> choice;
         return choice;
     }
 
-    // 도서 목록 출력 메서드
-    bool display_Books() const {
+    bool displayBooks() const {
         const vector<Book>& books = system.getBooks();
 
         if (books.empty()) {
@@ -628,45 +672,25 @@ public:
         }
     }
 
+    void addAdmin() {
+        string id = "", password = "", name = "", job = "";
+        Admin newAdmin("", "", "", "");
 
-    // 대여 기능 추가
-    void rentBook() {
-        if (currentMemberId.empty()) {
-            cout << "로그인이 필요합니다." << endl;
-            return;
-        }
-
-        string bookName;
-        cout << "대여할 도서 이름을 입력하세요: ";
-        cin.ignore();
-        getline(cin, bookName);
-
-        if (system.rent_Book(bookName, currentMemberId)) {
-            memberSystem.rentBook(currentMemberId, bookName);
-        }
+        // 관리자 정보 입력
+        cout << "관리자 추가" << endl;
+        cout << "아이디: ";
+        cin >> id;
+        cout << "비밀번호: ";
+        cin >> password;
+        cout << "이름: ";
+        cin >> name;
+        cout << "직업: ";
+        cin >> job;
+        newAdmin = Admin(id, password, name, job);
+        memberSystem.add_Admin(newAdmin);  // 관리자 추가 함수 호출
     }
 
-    // 반납 기능 추가
-    void returnBook() {
-        if (currentMemberId.empty()) {
-            cout << "로그인이 필요합니다." << endl;
-            return;
-        }
-
-        string bookName;
-        cout << "반납할 도서 이름을 입력하세요: ";
-        cin.ignore();
-        getline(cin, bookName);
-
-        if (system.return_Book(bookName, currentMemberId)) {
-            memberSystem.returnBook(currentMemberId, bookName);
-        }
-    }
-
-
-
-    // 새로운 도서 추가 메서드
-    void Add_Book() {
+    void addBook() {
         try {
             string bookName, writer, publisher, genre, review;
             float numbering, starPoint;
@@ -701,71 +725,70 @@ public:
         }
     }
 
-    void setcurrentMemberId(string id) {
-        currentMemberId = id;
+    void displayMembers() const {
+        memberSystem.displayMembers();
     }
 
-    string getcurrentMemberId() {
-        return currentMemberId;
-    }
 };
 
-class Member_App {
-private:
-    MemberSystem system;
-    string cuid;
 
+class StudentApp : public App {
+private:
+    BookSystem& system;
+    string currentMemberId;
+    MemberSystem memberSystem;
 
 public:
-    Member_App() {}
+    StudentApp(BookSystem& bookSystem) : system(bookSystem) {}
 
-    void run() {
+    void run() override {
         while (true) {
-            try {
-                showMenu();
-                int choice = getChoice();
+            showMenu();
+            int choice = getChoice();
 
-                switch (choice)
-                {
-                case 0:
-                    cout << "프로그램을 종료합니다." << endl;
-                    break;
-                case 1:
-                    Login();
-                    break;
-                case 2:
-                    signup();
-                    break;
-                case 3: {
-                    string deleteId;
-                    cout << "회원 삭제" << endl;
-                    cout << "삭제할 회원의 아이디: ";
-                    cin >> deleteId;
-                    system.deleteMember(deleteId); // 회원 삭제 함수 호출
+            switch (choice) {
+            case 0:
+                cout << "프로그램을 종료합니다." << endl;
+                return;
+            case 1:
+                displayBooks();
+                break;
+            case 2: {
+                if (!displayBooks()) {
                     break;
                 }
-                case 4:
-                    system.displayMembers();
-                    break;
-                default:
-                    cout << "잘못된 입력입니다. 다시 시도하세요." << endl;
-                    break;
-                }
+                string bookName;
+
+                cout << "대여할 도서 이름을 입력하세요: ";
+                cin.ignore();
+                getline(cin, bookName);
+                system.rentBook(bookName, currentMemberId);
+                break;
             }
-            catch (const exception& e) {
-                cerr << "Error: " << e.what() << endl; // 예외 메시지 출력
+            case 3: {
+                string bookName;
+
+                cout << "반납할 도서 이름을 입력하세요: ";
+                cin.ignore();
+                getline(cin, bookName);
+                system.returnBook(bookName);
+                break;
+            }
+            default:
+                cout << "잘못된 입력입니다. 다시 시도하세요." << endl;
             }
         }
     }
 
+
+
+private:
     void showMenu() const {
-        cout << "로그인 프로그램" << endl;
-        cout << "1. 로그인" << endl;
-        cout << "2. 회원 가입" << endl;
-        cout << "3. 회원 삭제" << endl;
-        cout << "4. 회원 조회및 삭제" << endl;
+        cout << "1. 도서 조회" << endl;
+        cout << "2. 도서 대여" << endl;
+        cout << "3. 도서 반납" << endl;
         cout << "0. 종료" << endl;
-        cout << "명령어 선택: " << endl;
+        cout << "메뉴 선택: ";
     }
 
     int getChoice() const {
@@ -774,17 +797,91 @@ public:
         return choice;
     }
 
-    void Login() {
+    bool displayBooks() const {
+        const vector<Book>& books = system.getBooks();
+
+        if (books.empty()) {
+            cout << "도서 목록이 비어 있습니다." << endl;
+            return 0;
+        }
+        else {
+            cout << "도서 목록: " << endl;
+            for (const Book& book : books) {
+                book.display();
+            }
+        }
+    }
+
+
+};
+
+
+class LoginApp : public App {
+private:
+    BookSystem& bookSystem;
+    MemberSystem& memberSystem;
+
+public:
+
+    LoginApp(BookSystem& bookSys, MemberSystem& memSys)
+        : bookSystem(bookSys), memberSystem(memSys) {}
+
+    void run() override {
+        while (true) {
+            showMenu();
+            int choice = getChoice();
+
+            switch (choice) {
+            case 0:
+                cout << "프로그램을 종료합니다." << endl;
+                return;
+            case 1:
+                login();
+                break;
+            case 2:
+                signup();
+                break;
+            default:
+                cout << "잘못된 입력입니다. 다시 시도하세요." << endl;
+            }
+        }
+    }
+
+private:
+    void showMenu() const {
+        cout << "1. 로그인" << endl;
+        cout << "2. 회원 가입" << endl;
+        cout << "0. 종료" << endl;
+        cout << "명령어 선택: ";
+    }
+    int getChoice() const {
+        int choice;
+        cin >> choice;
+        return choice;
+    }
+
+    void login() {
         string id = "", password = "";
         cout << "로그인" << endl;
         cout << "아이디: ";
         cin >> id;
-        cin.ignore(); // 이전 입력 버퍼를 비웁니다.
+        cin.ignore();
         cout << "비밀번호: ";
-        password = system.getPasswordFromUser(); // 비밀번호 입력 함수 호출.
-        if (system.login(id, password)) { // 로그인 함수 호출
-            Book_App App(id);
-            App.run();
+        password = memberSystem.getPasswordFromUser();
+
+        if (memberSystem.isAdmin(id)) {
+            // 관리자 로그인
+            AdminApp adminApp(bookSystem, memberSystem);
+            adminApp.run();
+        }
+        else if (memberSystem.login(id, password)) {
+            // 학생 로그인
+            cout << "로그인 성공!" << endl;
+            StudentApp studentApp(bookSystem);
+            studentApp.run();
+        }
+        else {
+            cout << "로그인 실패. 아이디나 비밀번호가 일치하지 않습니다." << endl;
         }
     }
 
@@ -803,25 +900,21 @@ public:
         cout << "직업: ";
         cin >> job;
         newUser = User(id, password, name, job, 5, 15); // 예시로 bookLimit과 daysLimit을 초기값으로 설정
-        system.signUp(newUser);                   // 회원가입 함수 호출
+        memberSystem.signUp(newUser);                   // 회원가입 함수 호출
 
     }
+
 
 };
 
 
 
-
-
-
-
-
 int main() {
-    Member_App App;
-    App.run();
+    BookSystem bookSystem;
+    MemberSystem memberSystem;
+
+    LoginApp loginApp(bookSystem, memberSystem);
+    loginApp.run();
+
     return 0;
 }
-
-
-
-
