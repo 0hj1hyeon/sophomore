@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LG</title>
     <style>
-        /* 전체 페이지 스타일 */
-        body {
+         /* 전체 페이지 스타일 */
+         body {
             font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             margin: 0;
             padding: 0;
+            position: relative; /* 버튼 위치 지정을 위해 부모 요소를 상대 위치로 설정 */
         }
 
         /* 페이지 헤더 스타일 */
@@ -43,7 +43,6 @@
             background-color: white;
             border: 1px solid #ddd;
             border-radius: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         /* 제품 이미지 스타일 */
@@ -51,6 +50,13 @@
             width: 100%;
             max-width: 300px;
             height: auto;
+            transition: border-color 0.3s ease; /* 테두리 색상 전환 효과를 부드럽게 하기 위한 transition */
+            border: 2px solid #ddd; /* 기본 테두리 스타일 */
+            border-radius: 5px;
+        }
+
+        .product img:hover {
+            border-color: #0055aa; /* 호버 시 변경하고 싶은 테두리 색상 */
         }
 
         /* 제품 설명 스타일 */
@@ -66,13 +72,110 @@
             text-align: center;
             margin-top: 10px;
         }
+        .product:not(:first-child) {
+            display: none;
+        }
+
+        /* 화살표 버튼 스타일 */
+        .next-button,
+        .prev-button {
+            display: block;
+            width: 50px;
+            height: 50px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            line-height: 50px;
+            text-align: center;
+            position: absolute; /* 절대 위치로 설정 */
+            top: 50%; /* 부모 요소 기준으로 수직 가운데 정렬 */
+            transform: translateY(-50%); /* 수직 가운데 정렬을 위한 변환 */
+            cursor: pointer;
+        }
+
+        .next-button {
+            right: 20px; /* 오른쪽 위치 지정 */
+        }
+
+        .prev-button {
+            left: 20px; /* 왼쪽 위치 지정 */
+        }
+
+        .next-button:focus,
+        .prev-button:focus {
+            outline: none;
+        }
     </style>
+    <script>
+        window.onload = function() {
+            var products = document.querySelectorAll('.product');
+            var currentIndex = 0;
+
+            function showProduct(index) {
+                products[index].style.display = 'block';
+            }
+
+            function hideProduct(index) {
+                products[index].style.display = 'none';
+            }
+
+            function displayNextProduct() {
+                hideProduct(currentIndex);
+                currentIndex++;
+                if (currentIndex >= products.length) {
+                    currentIndex = 0;
+                }
+                showProduct(currentIndex);
+            }
+
+            function displayPrevProduct() {
+                hideProduct(currentIndex);
+                currentIndex--;
+                if (currentIndex < 0) {
+                    currentIndex = products.length - 1;
+                }
+                showProduct(currentIndex);
+            }
+
+            var nextButton = document.querySelector('.next-button');
+            nextButton.addEventListener('click', displayNextProduct);
+
+            var prevButton = document.querySelector('.prev-button');
+            prevButton.addEventListener('click', displayPrevProduct);
+
+            // 이미지에 호버 시 테두리 색상 변경을 위한 이벤트 추가
+            var productImages = document.querySelectorAll('.product img');
+            productImages.forEach(function(img) {
+                img.addEventListener('mouseover', function() {
+                    img.style.borderColor = '#0055aa'; // 이미지 테두리 색상 변경
+                });
+                img.addEventListener('mouseout', function() {
+                    img.style.borderColor = '#ddd'; // 기본 이미지 테두리 색상으로 복원
+                });
+            });
+
+            // 화살표에 호버 시 색상 변경
+            var arrowButtons = document.querySelectorAll('.next-button, .prev-button');
+            arrowButtons.forEach(function(button) {
+                button.addEventListener('mouseover', function() {
+                    button.style.backgroundColor = '#0055aa';
+                });
+                button.addEventListener('mouseout', function() {
+                    button.style.backgroundColor = '#0077cc';
+                });
+            });
+
+            showProduct(0);
+        };
+    </script>
 </head>
 <body>
     <h1><a href="JHMALL.html"> <img src="C:\Users\ohj01\OneDrive\바탕 화면\웹프 과제\첫번째 과제\Thnk.png" alt="My Image"> </a></h1>
     <h2> LG </h2>
 
-    <!-- 첫 번째 제품 -->
+    <!-- 제품 목록 -->
     <div class="product">
         <a href="lgtv.html">
             <img src="https://www.lge.co.kr/kr/images/tvs/md10004836/md10004836-350x350.jpg" alt="LG TV">
@@ -80,7 +183,6 @@
         </a>
     </div>
 
-    <!-- 두 번째 제품 -->
     <div class="product">
         <a href="lgrefrigerator.html">
             <img src="https://www.lge.co.kr/kr/images/refrigerators/md09911826/gallery/medium01.jpg" alt="LG 냉장고">
@@ -88,7 +190,6 @@
         </a>
     </div>
 
-    <!-- 세 번째 제품 -->
     <div class="product">
         <a href="lgcleaner.html">
             <img src="https://www.lge.co.kr/kr/images/vacuum-cleaners/md10046831/md10046831-350x350.jpg" alt="LG 청소기">
@@ -96,12 +197,15 @@
         </a>
     </div>
 
-    <!-- 네 번째 제품 -->
     <div class="product">
         <a href="lgwashingm.html">
             <img src="https://www.lge.co.kr/kr/images/washing-machines/md10064826/md10064826-350x350.jpg" alt="LG 세탁기">
             <p>세탁기</p>
         </a>
     </div>
+
+    <!-- 화살표 버튼 -->
+    <button class="next-button">></button>
+    <button class="prev-button"><</button>
 </body>
 </html>

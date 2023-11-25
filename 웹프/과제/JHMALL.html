@@ -114,12 +114,49 @@
             background-color: #fff;
             border-radius: 5px;
         }
+        .login-button:hover {
+            background-color: #0055aa;
+        }
+
+        nav ul li a:hover {
+            color: #0055aa;
+        }
     </style>
+     <script>
+        window.onload = function() {
+            // 로그인 버튼
+            var loginButton = document.querySelector('.login-button');
+
+            // 로그인 버튼에 호버 이벤트 추가
+            loginButton.addEventListener('mouseover', function() {
+                loginButton.style.backgroundColor = '#0055aa';
+            });
+
+            loginButton.addEventListener('mouseout', function() {
+                loginButton.style.backgroundColor = '#0077cc';
+            });
+
+            // 네비게이션 링크
+            var navLinks = document.querySelectorAll('nav ul li a');
+
+            // 네비게이션 링크에 호버 이벤트 추가
+            navLinks.forEach(function(link) {
+                link.addEventListener('mouseover', function() {
+                    link.style.color = '#0055aa';
+                });
+
+                link.addEventListener('mouseout', function() {
+                    link.style.color = '#333';
+                });
+            });
+        };
+    </script>
+
 </head>
 <body>
     <header>
         <a href="JHMALL.html">
-            <img src="C:\Users\ohj01\OneDrive\바탕 화면\웹프 과제\첫번째 과제\Thnk.png" alt="My Image">
+            <img src="C:\Users\ohj01\OneDrive\바탕 화면\github\sophomore\웹프\과제\Thnk.png" alt="My Image">
         </a>
     </header>
     <div class="container">

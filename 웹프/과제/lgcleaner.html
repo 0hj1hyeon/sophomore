@@ -2,10 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LG 청소기</title>
     <style>
-
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -14,7 +12,6 @@
             text-align: center;
         }
 
-    
         h1 {
             background-color: #333;
             color: white;
@@ -22,13 +19,11 @@
             margin: 0;
         }
 
-       
         ul {
             list-style-type: none;
             padding: 0;
         }
 
-   
         li {
             margin: 20px;
             background-color: white;
@@ -38,9 +33,9 @@
             display: inline-block;
             width: 250px;
             text-align: center;
+            cursor: pointer; /* 커서를 포인터로 변경하여 클릭 가능한 것임을 표시 */
         }
 
-        /* 상품 이미지 스타일 */
         li img {
             width: 240px;
             height: 240px;
@@ -48,23 +43,40 @@
     </style>
 </head>
 <body>
-    <h1><a href = "JHMALL.html"> <img src="C:\Users\ohj01\OneDrive\바탕 화면\웹프 과제\첫번째 과제\Thnk.png" alt="My Image" width="387" height="243"> </a></h1>
+    <h1><a href="JHMALL.html"> <img src="C:\Users\ohj01\OneDrive\바탕 화면\웹프 과제\첫번째 과제\Thnk.png" alt="My Image" width="387" height="243"> </a></h1>
     <h2>LG 청소기</h2>
     <ul>
         <li>싸이킹 청소기<br/>
-            <img src = "https://www.lge.co.kr/kr/images/vacuum-cleaners/md10014830/md10014830-350x350.jpg"><br>
+            <img src="https://www.lge.co.kr/kr/images/vacuum-cleaners/md10014830/md10014830-350x350.jpg"><br>
             <strong>10만원</strong>
         </li>
 
         <li>코드제로 청소기<br/>
-            <img src = "https://www.lge.co.kr/kr/images/vacuum-cleaners/md10032833/md10032833-350x350.jpg"><br>
+            <img src="https://www.lge.co.kr/kr/images/vacuum-cleaners/md10032833/md10032833-350x350.jpg"><br>
             <strong>50만원</strong>
         </li>
 
         <li>로봇 청소기<br/>
-            <img src = "https://www.lge.co.kr/kr/images/vacuum-cleaners/md10046831/md10046831-350x350.jpg"><br>
+            <img src="https://www.lge.co.kr/kr/images/vacuum-cleaners/md10046831/md10046831-350x350.jpg"><br>
             <strong>50만원</strong>
         </li>
     </ul>
+
+    <script>
+        window.onload = function() {
+            var products = document.querySelectorAll('li'); // 모든 상품 목록을 선택합니다.
+
+            // 각 상품에 클릭 이벤트 추가
+            products.forEach(function(product) {
+                product.addEventListener('click', function() {
+                    var itemName = product.textContent.split('\n')[0].trim(); // 상품명 가져오기
+                    var itemPrice = product.querySelector('strong').textContent; // 상품 가격 가져오기
+
+                    // 클릭한 상품 정보를 알림창으로 표시합니다.
+                    alert("선택한 상품: " + itemName + "\n가격: " + itemPrice);
+                });
+            });
+        };
+    </script>
 </body>
 </html>
